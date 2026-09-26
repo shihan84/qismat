@@ -11,8 +11,8 @@ Last updated: 2026-09-26
 | Area | Status | Progress |
 |---|---|---:|
 | Architecture | In progress | 70% |
-| Backend/API | In progress | 93% |
-| Website | In progress | 93% |
+| Backend/API | In progress | 95% |
+| Website | In progress | 95% |
 | Admin dashboard | In progress | 82% |
 | Flutter mobile app | In progress | 20% |
 | Android CI/CD | In progress | 60% |
@@ -58,6 +58,7 @@ Last updated: 2026-09-26
 - [x] Structured family/career profile fields and partner-preference API deployed
 - [x] Member web profile, partner-preference and visibility integration deployed
 - [x] Private photo API, member photo manager and admin photo moderation deployed
+- [x] Private-photo access requests, owner-controlled reveal decisions and member trust indicators implemented
 - [x] Discovery filters, safe profile details, favourites and privacy-aware profile views implemented
 - [x] Member discovery/saved-profile UI and admin eligibility diagnostics implemented
 - [x] Sent/received interest management with accept, decline and cancellation
@@ -99,7 +100,7 @@ Last updated: 2026-09-26
 | Admin | shell 001 |
 | Android | shell 001 |
 | iOS | shell 001 |
-| Database schema | through migration `2026_09_26_000400` |
+| Database schema | through migration `2026_09_26_000500` |
 
 ## Major blockers and risks
 

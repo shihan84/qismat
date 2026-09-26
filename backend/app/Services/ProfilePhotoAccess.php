@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Block;
 use App\Models\Interest;
+use App\Models\PhotoAccessRequest;
 use App\Models\ProfilePhoto;
 use App\Models\User;
 
@@ -26,6 +28,15 @@ class ProfilePhotoAccess
             return false;
         }
 
+        $blocked = Block::query()->where(function ($query) use ($viewer, $owner) {
+            $query->where('blocker_id', $viewer->id)->where('blocked_user_id', $owner->id);
+        })->orWhere(function ($query) use ($viewer, $owner) {
+            $query->where('blocker_id', $owner->id)->where('blocked_user_id', $viewer->id);
+        })->exists();
+        if ($blocked) {
+            return false;
+        }
+
         if ($photo->visibility === 'members') {
             return $this->discoverable->query($viewer)->where('user_id', $owner->id)->exists();
         }
@@ -37,6 +48,14 @@ class ProfilePhotoAccess
                     $query->where(fn ($pair) => $pair->where('sender_id', $viewer->id)->where('receiver_id', $owner->id))
                         ->orWhere(fn ($pair) => $pair->where('sender_id', $owner->id)->where('receiver_id', $viewer->id));
                 })
+                ->exists();
+        }
+
+        if ($photo->visibility === 'private') {
+            return PhotoAccessRequest::query()
+                ->where('requester_id', $viewer->id)
+                ->where('owner_id', $owner->id)
+                ->where('status', 'approved')
                 ->exists();
         }
 

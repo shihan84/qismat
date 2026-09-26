@@ -78,7 +78,7 @@ class MatchController extends Controller
         $viewer = $request->user()->loadMissing('partnerPreference');
         $profile = $discoverable->find($viewer, $profile->id)->load([
             'user:id,name',
-            'photos' => fn ($photos) => $photos->where('moderation_status', 'approved')->where('visibility', 'members'),
+            'photos' => fn ($photos) => $photos->where('moderation_status', 'approved')->whereIn('visibility', ['members', 'private']),
             'favouritedBy' => fn ($favourites) => $favourites->where('user_id', $viewer->id),
         ]);
 

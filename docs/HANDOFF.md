@@ -52,6 +52,7 @@ Email/password registration, login and password reset are proxied through Larave
 - Administrator member search, audited suspension/reactivation, reviewed/identity-verification controls and searchable audit history.
 - Member web editing for structured profile fields, matching preferences and enforced profile visibility.
 - Private metadata-stripped profile photos, member photo management, audited admin photo moderation and approved-primary-photo discovery gating.
+- Owner-controlled private-photo access requests with approve, decline, cancellation and revocation, plus reviewed and identity-verified discovery indicators.
 - Privacy-safe member discovery with full filters, explainable preference matches, profile detail views, daily view recording and favourites.
 - Member discovery/saved-profile screens and administrator discovery-eligibility diagnostics.
 - Complete sent/received interest management, bidirectional blocking, confidential reports and an audited administrator safety queue.
@@ -65,7 +66,7 @@ Email/password registration, login and password reset are proxied through Larave
 1. Enable Google under Firebase Authentication → Sign-in method and complete a live Google login test.
 2. Provision the first production administrator from the server console and verify the moderation workflow.
 3. Verify the public support mailbox and approve the published privacy, terms, safety and retention language before launch.
-4. Add phone verification and precise trust indicators, then profile prompts and private-photo reveal requests.
+4. Add phone verification and profile-completion guidance prompts; private-photo reveal requests and current trust indicators are implemented.
 5. Complete notification delivery, observability and production-release hardening; rehearse rollback and backup restore, configure off-host copies and pin SSH host verification.
 6. Start Android implementation only after the web and admin launch scope is complete and stable.
 

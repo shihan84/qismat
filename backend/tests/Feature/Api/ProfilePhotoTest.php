@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api;
 
 use App\Models\Interest;
+use App\Models\PhotoAccessRequest;
 use App\Models\ProfilePhoto;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -197,6 +198,58 @@ class ProfilePhotoTest extends TestCase
         Sanctum::actingAs($member);
         $this->getJson('/api/v1/profile/photos')
             ->assertJsonPath('data.0.moderation_feedback', 'Please upload a clear, recent photo of yourself.');
+    }
+
+    public function test_private_photo_access_requires_an_approved_member_request(): void
+    {
+        $owner = User::factory()->create();
+        $viewer = User::factory()->create();
+        $owner->profile()->create([
+            'profile_code' => 'QSMPRIVATE01',
+            'display_name' => 'Private Photo Member',
+            'date_of_birth' => now()->subYears(28)->toDateString(),
+            'country' => 'CA',
+            'city' => 'Toronto',
+            'about_me' => 'A complete member biography.',
+            'visibility' => 'members',
+            'moderation_status' => 'approved',
+            'discovery_opt_in' => true,
+        ]);
+        $this->storedPhoto($owner, ['moderation_status' => 'approved']);
+        Storage::disk('profile_photos')->put("users/{$owner->id}/private.jpg", 'private-photo');
+        $privatePhoto = ProfilePhoto::create([
+            'user_id' => $owner->id,
+            'disk' => 'profile_photos',
+            'path' => "users/{$owner->id}/private.jpg",
+            'mime_type' => 'image/jpeg',
+            'width' => 800,
+            'height' => 900,
+            'size_bytes' => 13,
+            'is_primary' => false,
+            'visibility' => 'private',
+            'moderation_status' => 'approved',
+            'sort_order' => 1,
+        ]);
+
+        Sanctum::actingAs($viewer);
+        $this->get("/api/v1/profile/photos/{$privatePhoto->id}/content")->assertNotFound();
+        $this->postJson('/api/v1/photo-access-requests', ['user_id' => $owner->id])
+            ->assertCreated()
+            ->assertJsonPath('data.status', 'pending');
+        $requestId = PhotoAccessRequest::query()->value('id');
+
+        Sanctum::actingAs($owner);
+        $this->getJson('/api/v1/photo-access-requests?direction=received')
+            ->assertOk()
+            ->assertJsonPath('data.data.0.requester_id', $viewer->id);
+        $this->postJson("/api/v1/photo-access-requests/{$requestId}/respond", ['decision' => 'approved'])
+            ->assertOk()
+            ->assertJsonPath('data.status', 'approved');
+
+        Sanctum::actingAs($viewer);
+        $this->get("/api/v1/profile/photos/{$privatePhoto->id}/content")->assertOk();
+        $this->deleteJson("/api/v1/photo-access-requests/{$requestId}")->assertOk();
+        $this->get("/api/v1/profile/photos/{$privatePhoto->id}/content")->assertNotFound();
     }
 
     private function upload(string $name): ProfilePhoto

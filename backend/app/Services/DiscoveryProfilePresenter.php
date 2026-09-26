@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Profile;
 use App\Models\ProfilePhoto;
+use App\Models\PhotoAccessRequest;
 use App\Models\User;
 
 class DiscoveryProfilePresenter
@@ -48,15 +49,24 @@ class DiscoveryProfilePresenter
         ];
 
         if ($detail) {
+            $privateAccess = PhotoAccessRequest::query()
+                ->where('requester_id', $viewer->id)
+                ->where('owner_id', $profile->user_id)
+                ->first();
+            $canViewPrivate = $privateAccess?->status === 'approved';
             $payload += [
                 'about_me' => $profile->about_me,
-                'photos' => $profile->photos->map(fn (ProfilePhoto $item) => [
-                    'id' => $item->id,
-                    'content_url' => url('/api/v1/profile/photos/'.$item->id.'/content'),
-                    'width' => $item->width,
-                    'height' => $item->height,
-                    'is_primary' => (bool) $item->is_primary,
-                ])->values(),
+                'private_photo_count' => $profile->photos->where('visibility', 'private')->count(),
+                'private_photo_access_status' => $privateAccess?->status,
+                'photos' => $profile->photos
+                    ->filter(fn (ProfilePhoto $item) => $item->visibility === 'members' || ($item->visibility === 'private' && $canViewPrivate))
+                    ->map(fn (ProfilePhoto $item) => [
+                        'id' => $item->id,
+                        'content_url' => url('/api/v1/profile/photos/'.$item->id.'/content'),
+                        'width' => $item->width,
+                        'height' => $item->height,
+                        'is_primary' => (bool) $item->is_primary,
+                    ])->values(),
             ];
         }
 

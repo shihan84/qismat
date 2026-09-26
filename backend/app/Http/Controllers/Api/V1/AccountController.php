@@ -61,6 +61,7 @@ class AccountController extends Controller
             DB::table('favourites')->where('user_id', $user->id)->orWhere('favourite_user_id', $user->id)->delete();
             DB::table('profile_views')->where('viewer_id', $user->id)->orWhere('viewed_user_id', $user->id)->delete();
             DB::table('blocks')->where('blocker_id', $user->id)->orWhere('blocked_user_id', $user->id)->delete();
+            DB::table('photo_access_requests')->where('requester_id', $user->id)->orWhere('owner_id', $user->id)->delete();
             DB::table('interests')->where('sender_id', $user->id)->orWhere('receiver_id', $user->id)->delete();
             DB::table('conversations')->where('user_one_id', $user->id)->orWhere('user_two_id', $user->id)->delete();
             $user->profile()?->delete();

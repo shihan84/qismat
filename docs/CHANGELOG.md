@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-26 — Private photo access and trust indicators
+
+- Added member-to-member private-photo access requests with owner approval, decline, cancellation and revocation.
+- Enforced approved access at the photo-content boundary, including immediate denial when either member blocks the other.
+- Added received and sent photo-request management to the member website.
+- Added profile-reviewed and identity-verified trust indicators to discovery details.
+
 ## 2026-09-26 — Administrator member operations
 
 - Added role-protected member search by name, email and profile code with account, moderation, verification and report context.

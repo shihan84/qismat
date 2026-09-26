@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\FirebaseAuthController;
 use App\Http\Controllers\Api\V1\InterestController;
 use App\Http\Controllers\Api\V1\MatchController;
 use App\Http\Controllers\Api\V1\PartnerPreferenceController;
+use App\Http\Controllers\Api\V1\PhotoAccessRequestController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ProfileOnboardingController;
 use App\Http\Controllers\Api\V1\ProfilePhotoController;
@@ -95,6 +96,10 @@ Route::prefix('v1')->group(function () {
             Route::post('/conversations/{conversation}/messages', [ConversationController::class, 'store'])->middleware('throttle:30,1');
             Route::post('/conversations/{conversation}/read', [ConversationController::class, 'read']);
             Route::delete('/messages/{message}', [ConversationController::class, 'destroy']);
+            Route::get('/photo-access-requests', [PhotoAccessRequestController::class, 'index']);
+            Route::post('/photo-access-requests', [PhotoAccessRequestController::class, 'store'])->middleware('throttle:10,1');
+            Route::post('/photo-access-requests/{photoAccessRequest}/respond', [PhotoAccessRequestController::class, 'respond']);
+            Route::delete('/photo-access-requests/{photoAccessRequest}', [PhotoAccessRequestController::class, 'destroy']);
         });
     });
 });

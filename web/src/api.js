@@ -78,6 +78,10 @@ export const getNotificationPreferences = () => request('/account/notification-p
 export const updateNotificationPreferences = (preferences) => request('/account/notification-preferences', { method: 'PUT', body: JSON.stringify(preferences) }).then(({ data }) => data);
 export const logoutAllApi = () => request('/auth/logout-all', { method: 'POST' }).then(({ data }) => data);
 export const deleteAccount = () => request('/account', { method: 'DELETE', body: JSON.stringify({ confirmation: 'DELETE' }) }).then(({ data }) => data);
+export const getPhotoAccessRequests = (direction = 'received') => request(`/photo-access-requests?direction=${direction}`).then(({ data }) => data);
+export const requestPhotoAccess = (userId) => request('/photo-access-requests', { method: 'POST', body: JSON.stringify({ user_id: userId }) }).then(({ data }) => data);
+export const respondPhotoAccess = (requestId, decision) => request(`/photo-access-requests/${requestId}/respond`, { method: 'POST', body: JSON.stringify({ decision }) }).then(({ data }) => data);
+export const revokePhotoAccess = (requestId) => request(`/photo-access-requests/${requestId}`, { method: 'DELETE' }).then(({ data }) => data);
 export const getConversations = () => request('/conversations').then(({ data }) => data);
 export const getMessages = (conversationId) => request(`/conversations/${conversationId}/messages`).then(({ data }) => data);
 export const sendMessage = (conversationId, body) => request(`/conversations/${conversationId}/messages`, { method: 'POST', body: JSON.stringify({ body }) }).then(({ data }) => data);
